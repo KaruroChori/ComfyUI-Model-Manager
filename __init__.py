@@ -579,6 +579,7 @@ async def get_model_preview(request):
     if uri is None: # BUG: this should never happen
         print(f"Invalid uri! Request url: {request.url}")
         uri = "no-preview"
+    uri = urllib.parse.unquote(uri)
     quality = 75
     response_image_format = request.query.get("image-format", None)
     if isinstance(response_image_format, str):
