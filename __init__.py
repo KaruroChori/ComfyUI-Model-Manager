@@ -591,12 +591,7 @@ async def get_model_preview(request):
         sep = os.path.sep
         uri = uri.replace("/" if sep == "\\" else "/", sep)
         path, _ = search_path_to_system_path(uri)
-        try:
-            head, extension = split_valid_ext(path, preview_extensions)
-        except Exception as e:
-            print(f"URL: {request.url}; URI: {uri}; Image Format: {response_image_format}")
-            print(e, file=sys.stderr, flush=True)
-            raise RuntimeError("Invalid path!")
+        head, extension = split_valid_ext(path, preview_extensions)
         if os.path.exists(path):
             image_path = path
             file_name = os.path.split(head)[1] + extension
