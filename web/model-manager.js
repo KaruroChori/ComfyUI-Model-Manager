@@ -3556,6 +3556,10 @@ class Civitai {
       if (Object.keys(modelInfo).length == 0) {
         return {};
       }
+      if (Object.hasOwn(modelInfo, 'error')) {
+        window.alert(modelInfo['message'] + '\n' + modelInfo['error']);
+        return {};
+      }
       const modelVersionId = parseInt(url.searchParams.get('modelVersionId'));
       const modelVersions = [];
       const modelVersionInfos = modelInfo['modelVersions'];
