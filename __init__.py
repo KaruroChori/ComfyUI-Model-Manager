@@ -275,7 +275,7 @@ def hash_file(path, buffer_size=1024*1024):
 
 class Civitai:
     IMAGE_URL_SUBDIRECTORY_PREFIX = "https://civitai.com/images/"
-    IMAGE_URL_DOMAIN_PREFIX = "'https://image.civitai.com/"
+    IMAGE_URL_DOMAIN_PREFIX = "https://image.civitai.com/"
 
     @staticmethod
     def image_subdirectory_url_to_image_url(image_url):
@@ -303,15 +303,14 @@ class Civitai:
             raise RuntimeError("Bad response from api/v1/images!")
 
     @staticmethod
-    def image_domain_url_full_size(url, width = None):
+    def image_domain_url_full_size(url):
         result = re.search("/width=(\d+)", url)
-        if width is None:
-            i0 = result.span()[0]
-            i1 = result.span()[1]
-            return url[0:i0] + url[i1:]
-        else:
-            w = int(result.group(1))
-            return url.replace(str(w), str(width))
+        if result is None:
+            return url
+        span = result.span()
+        i0 = span[0]
+        i1 = span[1]
+        return url[0:i0] + "/original=true,quality=90,optimized=true" + url[i1:]
 
     @staticmethod
     def search_by_hash(sha256_hash):
@@ -351,7 +350,7 @@ class Civitai:
         for image_info in images:
             url = image_info["url"]
             if full_size:
-                url = Civitai.image_domain_url_full_size(url, image_info.get("width", None))
+                url = Civitai.image_domain_url_full_size(url)
             preview_urls.append(url)
         return preview_urls
 
