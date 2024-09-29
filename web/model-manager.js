@@ -4051,9 +4051,12 @@ class DownloadView {
       //else if (m == "") { return "gligen"; }
       else if (m == 'hypernetwork' || m == 'hypernetworks') {
         return 'hypernetworks';
-      } else if (m == 'lora' || m == 'loras') {
-        return 'loras';
-      } else if (m == 'locon') {
+      } else if (
+        m == 'lora' || 
+        m == 'loras' || 
+        m == 'locon' || 
+        m == 'dora'
+      ) {
         return 'loras';
       } else if (m == 'motionmodule') {
         return null;
