@@ -195,7 +195,7 @@ def ui_rules():
         Rule("model-show-load-workflow-button", True, bool),
         Rule("model-show-open-model-url-button", False, bool),
         Rule("model-info-button-on-left", False, bool),
-        Rule("model-buttons-only-on-hover", False, bool),
+        Rule("model-buttons-only-on-hover", True, bool),
         
         Rule("model-add-embedding-extension", False, bool),
         Rule("model-add-drag-strict-on-field", False, bool),
