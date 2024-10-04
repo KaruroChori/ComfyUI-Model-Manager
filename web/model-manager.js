@@ -690,31 +690,10 @@ class ImageSelect {
             url = child.src;
           }
         }
-        if (url.startsWith(Civitai.imageUrlPrefix())) {
-          url = await Civitai.getFullSizeImageUrl(url).catch((err) => {
-            console.warn(err);
-            return url;
-          });
-        }
         return url;
       }
       case this.#PREVIEW_URL: {
-        const value = elements.customUrl.value;
-        if (value.startsWith(Civitai.imagePostUrlPrefix())) {
-          try {
-            const imageInfo = await Civitai.getImageInfo(value);
-            const items = imageInfo['items'];
-            if (items.length === 0) {
-              console.warn('Civitai /api/v1/images returned 0 items.');
-              return value;
-            }
-            return items[0]['url'];
-          } catch (error) {
-            console.error('Failed to get image info from Civitai!', error);
-            return value;
-          }
-        }
-        return value;
+        return elements.customUrl.value;
       }
       case this.#PREVIEW_UPLOAD:
         return elements.uploadFile.files[0] ?? '';
@@ -913,31 +892,6 @@ class ImageSelect {
       [el_uploadFile],
     );
 
-    /**
-     * @param {string} url
-     * @returns {Promise<string>}
-     */
-    const getCustomPreviewUrl = async (url) => {
-      if (url.startsWith(Civitai.imagePostUrlPrefix())) {
-        return await Civitai.getImageInfo(url)
-          .then((imageInfo) => {
-            const items = imageInfo['items'];
-            if (items.length > 0) {
-              return items[0]['url'];
-            } else {
-              console.warn('Civitai /api/v1/images returned 0 items.');
-              return url;
-            }
-          })
-          .catch((error) => {
-            console.error('Failed to get image info from Civitai!', error);
-            return url;
-          });
-      } else {
-        return url;
-      }
-    };
-
     const el_customUrlPreview = $el('img', {
       $: (el) => (this.elements.customUrlPreview = el),
       src: PREVIEW_NONE_URI,
@@ -954,8 +908,7 @@ class ImageSelect {
       placeholder: 'https://custom-image-preview.png',
       onkeydown: async (e) => {
         if (e.key === 'Enter') {
-          const value = e.target.value;
-          el_customUrlPreview.src = await getCustomPreviewUrl(value);
+          el_customUrlPreview.src = e.target.value;
           e.stopPropagation();
           e.target.blur();
         }
@@ -976,8 +929,7 @@ class ImageSelect {
           action: async (e) => {
             const [button, icon, span] = comfyButtonDisambiguate(e.target);
             button.disabled = true;
-            const value = el_customUrl.value;
-            el_customUrlPreview.src = await getCustomPreviewUrl(value);
+            el_customUrlPreview.src = el_customUrl.value;
             e.stopPropagation();
             el_customUrl.blur();
             button.disabled = false;
@@ -3617,38 +3569,6 @@ class Civitai {
     } catch (error) {
       console.error('Failed to get image info from Civitai!', error);
       return {};
-    }
-  }
-
-  /**
-   * @param {string} stringUrl - https://image.civitai.com/...
-   *
-   * @returns {Promise<string>}
-   */
-  static async getFullSizeImageUrl(stringUrl) {
-    const imageUrlPrefix = Civitai.imageUrlPrefix();
-    if (!stringUrl.startsWith(imageUrlPrefix)) {
-      return '';
-    }
-    const i0 = stringUrl.lastIndexOf('/');
-    const i1 = stringUrl.lastIndexOf('.');
-    if (i0 === -1 || i1 === -1) {
-      return '';
-    }
-    const id = parseInt(stringUrl.substring(i0 + 1, i1)).toString();
-    const url = `https://civitai.com/api/v1/images?imageId=${id}`;
-    try {
-      const response = await fetch(url);
-      const imageInfo = await response.json();
-      const items = imageInfo['items'];
-      if (items.length === 0) {
-        console.warn('Civitai /api/v1/images returned 0 items.');
-        return stringUrl;
-      }
-      return items[0]['url'];
-    } catch (error) {
-      console.error('Failed to get image info from Civitai!', error);
-      return stringUrl;
     }
   }
 }
