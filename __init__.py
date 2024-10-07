@@ -1282,8 +1282,9 @@ async def get_model_metadata(request):
             i1 = thumbnail.find(";", i0)
             thumbnail_extension = "." + thumbnail[i0:i1]
             if thumbnail_extension in image_extensions:
+                preview_path, _ = split_valid_ext(model_path, model_extensions)
                 data["Preview"] = {
-                    "path": request.query["path"] + thumbnail_extension,
+                    "path": preview_path + thumbnail_extension,
                     "dateModified": date_modified,
                 }
 
