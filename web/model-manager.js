@@ -3476,7 +3476,7 @@ class Civitai {
         modelVersionId,
         'model-versions',
       );
-      if (Object.keys(modelVersionInfo).length == 0) {
+      if (modelVersionInfo === undefined || Object.keys(modelVersionInfo).length == 0) {
         return {};
       }
       const searchParams = url.searchParams;
