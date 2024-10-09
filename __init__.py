@@ -1017,7 +1017,7 @@ async def get_directory_list(request):
 
 
 def try_download_and_save_model_info(model_file_path):
-    success = (0, 0, 0) #info, notes, url
+    success = [0, 0, 0] #info, notes, url
     head, _ = os.path.splitext(model_file_path)
     model_info_path = head + model_info_extension
     model_notes_path = head + model_notes_extension
